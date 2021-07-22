@@ -1,3 +1,4 @@
+use geometry::Figure::*;
 use geometry::{flat, volume, Figure};
 use std::error::Error;
 
@@ -12,7 +13,7 @@ impl NewFigure for Figure {
         }
 
         for arg in args[2..].iter() {
-            if !arg.parse::<f64>().is_ok() || arg.parse::<f64>().unwrap() < 0.0 {
+            if arg.parse::<f64>().is_err() || arg.parse::<f64>().unwrap() < 0.0 {
                 return Err("wrong numeric parameters");
             }
         }
@@ -24,14 +25,14 @@ impl NewFigure for Figure {
                 }
                 let height = args[2].parse().unwrap();
                 let width = args[3].parse().unwrap();
-                Figure::Rectangle { height, width }
+                Rectangle { height, width }
             }
             "circle" => {
                 if args.len() != 3 {
                     return Err("circle should have 1 parameter");
                 }
                 let radius = args[2].parse().unwrap();
-                Figure::Circle { radius }
+                Circle { radius }
             }
             "parallelepiped" => {
                 if args.len() != 5 {
@@ -40,7 +41,7 @@ impl NewFigure for Figure {
                 let height = args[2].parse().unwrap();
                 let width = args[3].parse().unwrap();
                 let depth = args[4].parse().unwrap();
-                Figure::Cuboid {
+                Cuboid {
                     height,
                     width,
                     depth,
@@ -51,7 +52,7 @@ impl NewFigure for Figure {
                     return Err("sphere should have 1 parameter");
                 }
                 let radius = args[2].parse().unwrap();
-                Figure::Sphere { radius }
+                Sphere { radius }
             }
             _ => {
                 return Err("wrong figure type");
@@ -63,8 +64,8 @@ impl NewFigure for Figure {
 
 pub fn run(figure: Figure) -> Result<(), Box<dyn Error>> {
     let result = match figure {
-        Figure::Rectangle { .. } | Figure::Circle { .. } => flat::get_area(&figure),
-        Figure::Cuboid { .. } | Figure::Sphere { .. } => volume::get_volume(&figure),
+        Rectangle { .. } | Circle { .. } => flat::get_area(&figure),
+        Cuboid { .. } | Sphere { .. } => volume::get_volume(&figure),
     };
 
     match result {
